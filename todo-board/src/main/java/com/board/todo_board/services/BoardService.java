@@ -42,7 +42,7 @@ public class BoardService {
     public void createColumns(Long boardId, List<ColumEntity> columns){
         System.out.println("CRIANDO COLUNAS...");
         columns.forEach(columEntity -> {
-            columEntity.setBoard_id(boardId);
+            columEntity.setBoardId(boardId);
             columRepository.save(columEntity);
 
             System.out.println("COLUNA CRIADA COM SUCESSO!!");
@@ -81,6 +81,14 @@ public class BoardService {
 
     public List<BoardEntity> getAllBoards(){
         return boardRepository.findAll();
+    }
+
+    public List<ColumEntity> getAllColumnsByBoardId(Long boardId){
+        return columRepository.findByBoardId(boardId);
+    }
+
+    public List<CardEntity> getAllCardByColumnId(Long columnId){
+        return cardRepository.findByColumnId(columnId);
     }
 
     public void deleteBoard(BoardEntity board){

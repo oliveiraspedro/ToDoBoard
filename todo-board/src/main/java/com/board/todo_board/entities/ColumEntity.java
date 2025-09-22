@@ -22,5 +22,6 @@ public class ColumEntity {
 
     private ColumTypesEnum type;
 
-    private Long board_id;
+    @Column(name = "board_id")
+    private Long boardId;
 }

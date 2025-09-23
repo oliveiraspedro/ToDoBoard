@@ -28,10 +28,12 @@ public class MainMenu {
         boolean runnig = true;
 
         while(runnig){
-            System.out.println("1 - Criar um Board");
-            System.out.println("2 - Selecionar um Board");
-            System.out.println("3 - Deletar um Board");
-            System.out.println("4 - Sair");
+            AtomicInteger optionsCounter = new AtomicInteger();
+            System.out.println(optionsCounter.getAndIncrement()+1 + " - Criar um Board");
+            System.out.println(optionsCounter.getAndIncrement()+1 + " - Selecionar um Board");
+            System.out.println(optionsCounter.getAndIncrement()+1 + " - Editar um Board");
+            System.out.println(optionsCounter.getAndIncrement()+1 + " - Deletar um Board");
+            System.out.println(optionsCounter.getAndIncrement()+1 + " - Sair");
 
             int response = Integer.parseInt(sc.nextLine());
 
@@ -45,10 +47,14 @@ public class MainMenu {
                     selectBoard();
                     break;
                 case 3:
-                    System.out.println("Deletando um board");
+                    System.out.println("Editar um Board");
                     deleteBoard();
                     break;
                 case 4:
+                    System.out.println("Deletando um board");
+                    deleteBoard();;
+                    break;
+                case 5:
                     System.out.println("Saindo do sistema...");
                     runnig = false;
                     break;
@@ -116,6 +122,8 @@ public class MainMenu {
             }
         }
     }
+
+    private void editBoard(){}
 
     private void deleteBoard(){
         List<BoardEntity> boardList = boardService.getAllBoards();

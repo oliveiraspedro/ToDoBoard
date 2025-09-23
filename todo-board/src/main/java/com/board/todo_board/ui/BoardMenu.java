@@ -20,45 +20,26 @@ public class BoardMenu {
 
     Scanner sc = new Scanner(System.in);
 
-    List<ColumEntity> columnsList = new ArrayList<>();
-    List<CardEntity> cardsList = new ArrayList<>();
-
     public void execute(BoardEntity board){
 
+        AtomicInteger optionsIndex = new AtomicInteger(1);
         boolean runnig = true;
 
-        columnsList = boardService.getAllColumnsByBoardId(board.getId());
+        displayBoard(board);
 
-        //todo: Fazer com que após o usuário realizar alguma ação, mostrar novamente as informações abaixo
-        System.out.println("*****************************************************");
-        System.out.println("                    Board de Tarefas");
-        System.out.println("*****************************************************");
-        System.out.println(">> Nome: " + board.getName());
-        columnsList.forEach(column -> {
-            AtomicInteger atomicInteger = new AtomicInteger();
-            cardsList = boardService.getAllCardByColumnId(column.getId());
-
-            System.out.println("-----------------------------------------------------\n" +
-                    " COLUNA: " + column.getName() + "\n" +
-                    "-----------------------------------------------------");
-            cardsList.forEach(card -> {
-                System.out.println("   >> Card #" + atomicInteger.getAndIncrement()+1 +" | " + card.getTitle() + "\n" +
-                        "      " + card.getDescription() +"\n");
-            });
-        });
-
-        System.out.println("*****************************************************\n" +
-                "              Ações Disponíveis\n" +
-                "*****************************************************");
-
+        System.out.println("""
+                *****************************************************
+                              Ações Disponíveis
+                *****************************************************""");
         while(runnig){
             System.out.println("BOARD: " + board.getName());
-            System.out.println("1 - Criar um Card");
-            System.out.println("2 - Mover Card");
-            System.out.println("3 - Cancelar um Card");
-            System.out.println("4 - Bloquear um Card");
-            System.out.println("5 - Desbloquear um Card");
-            System.out.println("6 - Sair");
+            System.out.println(optionsIndex.getAndIncrement() + " - Criar um Card");
+            System.out.println(optionsIndex.getAndIncrement() + " - Mover Card");
+            System.out.println(optionsIndex.getAndIncrement() + " - Editar Card");
+            System.out.println(optionsIndex.getAndIncrement() + " - Cancelar um Card");
+            System.out.println(optionsIndex.getAndIncrement() + " - Bloquear um Card");
+            System.out.println(optionsIndex.getAndIncrement() + " - Desbloquear um Card");
+            System.out.println(optionsIndex.getAndIncrement() + " - Sair");
 
             int response = Integer.parseInt(sc.nextLine());
 
@@ -72,18 +53,22 @@ public class BoardMenu {
                     moveCard();
                     break;
                 case 3:
+                    System.out.println("Editar um card");
+                    editCard(board);
+                    break;
+                case 4:
                     System.out.println("Cancelando um card");
                     cancelCard();
                     break;
-                case 4:
+                case 5:
                     System.out.println("Bloqueando um card");
                     blockCard();
                     break;
-                case 5:
+                case 6:
                     System.out.println("Desbloqueando um card");
                     unblockCard();
                     break;
-                case 6:
+                case 7:
                     System.out.println("Saindo do sistema...");
                     runnig = false;
                     break;
@@ -91,7 +76,29 @@ public class BoardMenu {
         }
     }
 
-    public void createCard(Long boardId){
+    public void displayBoard(BoardEntity board){
+        List<ColumEntity> columnsList = boardService.getAllColumnsByBoardId(board.getId());
+        AtomicInteger cardIndex = new AtomicInteger(1);
+
+        //todo: Fazer com que após o usuário realizar alguma ação, mostrar novamente as informações abaixo
+        System.out.println("*****************************************************");
+        System.out.println("                    Board de Tarefas");
+        System.out.println("*****************************************************");
+        System.out.println(">> Nome: " + board.getName());
+        columnsList.forEach(column -> {
+            List<CardEntity> cardsList = boardService.getAllCardByColumnId(column.getId());
+
+            System.out.println("-----------------------------------------------------\n" +
+                    " COLUNA: " + column.getName() + "\n" +
+                    "-----------------------------------------------------");
+            cardsList.forEach(card -> {
+                System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + "\n" +
+                        "      " + card.getDescription() +"\n");
+            });
+        });
+    }
+
+    private void createCard(Long boardId){
         System.out.println("Digite o título do card:");
         String cardTitle = sc.nextLine();
 
@@ -103,11 +110,24 @@ public class BoardMenu {
 
     private void moveCard() {}
 
+    private void editCard(BoardEntity board){
+        List<CardEntity> cardsList = new ArrayList<>();
+        List<ColumEntity> columnList = boardService.getAllColumnsByBoardId(board.getId());
+        AtomicInteger cardIndex = new AtomicInteger(1);
+
+        columnList.forEach(column -> cardsList.addAll(boardService.getAllCardByColumnId(column.getId())));
+
+        System.out.println("*****************************************************");
+        System.out.println("           Selecione um Card para Edição");
+        System.out.println("*****************************************************");
+        cardsList.forEach(card -> {
+            System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + " (ID: " + card.getId() + ")");
+        });
+    }
+
     private void cancelCard(){}
 
     private void blockCard(){}
 
     private void unblockCard(){}
-
-    //private List<CardEntity> loadCards(Long id){}
 }

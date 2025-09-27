@@ -3,6 +3,7 @@ package com.board.todo_board.services;
 import com.board.todo_board.entities.BoardEntity;
 import com.board.todo_board.entities.CardEntity;
 import com.board.todo_board.entities.ColumnEntity;
+import com.board.todo_board.enums.ColumTypesEnum;
 import com.board.todo_board.repositories.BoardRepository;
 import com.board.todo_board.repositories.CardRepository;
 import com.board.todo_board.repositories.ColumRepository;
@@ -13,6 +14,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BoardService {
@@ -77,7 +79,9 @@ public class BoardService {
 
             //todo: Arrumar está lógica. O parâmetro passado aqui deve ser o da coluna board_id na tabela columns
             //      aonde o type dessa coluna tem que ser igual a INITIAL
-            card.setColumnId(boardId);
+            Optional<ColumnEntity> initialColumnOptional = columRepository.findByBoardIdAndType(boardId, ColumTypesEnum.INITIAL);
+            ColumnEntity initialColumn = initialColumnOptional.orElseThrow(() -> new RuntimeException("Coluna inicial não encontrada para este board"));
+            card.setColumnId(initialColumn.getId());
             cardRepository.save(card);
         }
     }
@@ -87,7 +91,7 @@ public class BoardService {
     }
 
     public List<ColumnEntity> getAllColumnsByBoardId(Long boardId){
-        return columRepository.findByBoardId(boardId);
+        return columRepository.findColumnsByBoardId(boardId);
     }
 
     public List<CardEntity> getAllCardByColumnId(Long columnId){

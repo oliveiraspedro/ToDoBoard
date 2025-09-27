@@ -22,8 +22,6 @@ public class BoardMenu {
     Scanner sc = new Scanner(System.in);
 
     public void execute(BoardEntity board){
-
-        AtomicInteger optionsIndex = new AtomicInteger(1);
         boolean runnig = true;
 
         displayBoard(board);
@@ -33,6 +31,8 @@ public class BoardMenu {
                               Ações Disponíveis
                 *****************************************************""");
         while(runnig){
+            AtomicInteger optionsIndex = new AtomicInteger(1);
+
             System.out.println("BOARD: " + board.getName());
             System.out.println(optionsIndex.getAndIncrement() + " - Criar um Card");
             System.out.println(optionsIndex.getAndIncrement() + " - Mover Card");

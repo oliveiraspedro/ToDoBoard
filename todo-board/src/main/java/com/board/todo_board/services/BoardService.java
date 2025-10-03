@@ -121,6 +121,14 @@ public class BoardService {
         }
     }
 
+    public void alterCardTitle(CardEntity card, String newTitle){
+        cardRepository.alterCardTitleByCardId(card.getId(), newTitle);
+    }
+
+    public void alterCardDescription(CardEntity card, String newDescription){
+        cardRepository.alterCardDescriptionByCardId(card.getId(), newDescription);
+    }
+
     public void deleteBoard(BoardEntity board){
         boardRepository.delete(board);
     }

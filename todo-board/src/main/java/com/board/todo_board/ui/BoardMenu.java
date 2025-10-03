@@ -169,16 +169,24 @@ public class BoardMenu {
             System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + " (ID: " + card.getId() + ")");
         });
 
-        System.out.println("   >> Título 1");
-        System.out.println("   >> Descrição 2");
+        //todo: Fazer tratamento de erro
+
+        int cardSelected = Integer.parseInt(sc.nextLine())-1;
+
+        System.out.println("   >> 1 - Título");
+        System.out.println("   >> 2 - Descrição");
         System.out.println("O que você quer editar?");
         int userRespose = Integer.parseInt(sc.nextLine());
         
-//        if (userRespose == 1){
-//            boardService.alterCardTitle();
-//        } else if (userRespose == 2) {
-//            boardService.alterCardDescription();
-//        }
+        if (userRespose == 1){
+            System.out.println("Digite o novo título do card: ");
+            String newTitle = sc.nextLine();
+            boardService.alterCardTitle(cardsList.get(cardSelected), newTitle);
+        } else if (userRespose == 2) {
+            System.out.println("Digite a nova descrição do card: ");
+            String newDescription = sc.nextLine();
+            boardService.alterCardDescription(cardsList.get(cardSelected), newDescription);
+        }
     }
 
     private void cancelCard(){}

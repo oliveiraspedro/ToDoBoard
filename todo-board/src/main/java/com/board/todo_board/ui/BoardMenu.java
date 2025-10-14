@@ -68,7 +68,7 @@ public class BoardMenu {
                     break;
                 case 6:
                     System.out.println("Desbloqueando um card");
-                    unblockCard();
+                    unblockCard(board);
                     break;
                 case 7:
                     System.out.println("Saindo do sistema...");
@@ -213,14 +213,29 @@ public class BoardMenu {
 
         CardDetailsDTO cardDTO = boardService.getCardById(cardsList.get(cardSelected).getId());
 
-        System.out.println("   >> Card #" + cardDTO.getId() + " | " + cardDTO.getTitle() + "\n" +
-                "      " + "Descrição: " + cardDTO.getDescription() + "\n" +
-                "      " + "Criado em: " + cardDTO.getCreateAt() + "\n" +
-                "      " + "Status: " + "" + "\n" +
-                "      " + "Motivo: " + cardDTO.getBlockCause() + "\n" +
-                "      " + "Data de Bloqueio: " + cardDTO.getBlockedIn());
+        if (cardDTO.isBlocked() || cardDTO.getBlockedIn() != null){
+            System.out.println("   >> Card #" + cardDTO.getId() + " | " + cardDTO.getTitle() + "\n" +
+                    "      " + "Descrição: " + cardDTO.getDescription() + "\n" +
+                    "      " + "Criado em: " + cardDTO.getCreateAt() + "\n" +
+                    "      " + "Status: " + "BLOQUEADO" + "\n" +
+                    "      " + "Motivo: " + cardDTO.getBlockCause() + "\n" +
+                    "      " + "Data de Bloqueio: " + cardDTO.getBlockedIn());
 
+        } else if(cardDTO.getUnblockedIn() != null){
+            System.out.println("   >> Card #" + cardDTO.getId() + " | " + cardDTO.getTitle() + "\n" +
+                    "      " + "Descrição: " + cardDTO.getDescription() + "\n" +
+                    "      " + "Criado em: " + cardDTO.getCreateAt() + "\n" +
+                    "      " + "Status: " + "DESBLOQUEADO" + "\n" +
+                    "      " + "Motivo: " + cardDTO.getUnblockCause() + "\n" +
+                    "      " + "Data de Desbloqueio: " + cardDTO.getUnblockedIn());
+        } else {
+            System.out.println("   >> Card #" + cardDTO.getId() + " | " + cardDTO.getTitle() + "\n" +
+                    "      " + "Descrição: " + cardDTO.getDescription() + "\n" +
+                    "      " + "Criado em: " + cardDTO.getCreateAt() + "\n" +
+                    "      " + "Status: " + "ATIVO" + "\n");
+        }
     }
+
 
     private void blockCard(BoardEntity board){
         List<CardEntity> cardsList = new ArrayList<>();
@@ -244,5 +259,25 @@ public class BoardMenu {
         boardService.blockCard(cardsList.get(cardSelected).getId(), blockCause);
     }
 
-    private void unblockCard(){}
+    private void unblockCard(BoardEntity board){
+        List<CardEntity> cardsList = new ArrayList<>();
+        List<ColumnEntity> columnList = boardService.getAllColumnsByBoardId(board.getId());
+        AtomicInteger cardIndex = new AtomicInteger(1);
+
+        columnList.forEach(column -> cardsList.addAll(boardService.getAllCardByColumnId(column.getId())));
+
+        System.out.println("*****************************************************");
+        System.out.println("           Selecione um Card para Desbloquear");
+        System.out.println("*****************************************************");
+        cardsList.forEach(card -> {
+            System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + " (ID: " + card.getId() + ")");
+        });
+
+        int cardSelected = Integer.parseInt(sc.nextLine())-1;
+
+        System.out.println("Qual é o motivo do desbloqueio?");
+        String unblockCause = sc.nextLine();
+
+        boardService.unblockCard(cardsList.get(cardSelected).getBlockedCard(), unblockCause);
+    }
 }

@@ -110,15 +110,14 @@ public class BoardService {
 
         BlockedCardEntity blockedCard = card.getBlockedCard();
 
-        if (blockedCard != null) {
+        if (blockedCard != null && blockedCard.getUnblockCause() == null) {
             cardDetailsDTO.setBlocked(true);
             cardDetailsDTO.setBlockedIn(blockedCard.getBlockedIn());
             cardDetailsDTO.setBlockCause(blockedCard.getBlockCause());
-
-            if (blockedCard.getUnblockedIn() != null) {
-                cardDetailsDTO.setUnblockedIn(blockedCard.getUnblockedIn());
-                cardDetailsDTO.setUnblockCause(blockedCard.getUnblockCause());
-            }
+        } else if (blockedCard != null && blockedCard.getUnblockCause() != null){
+            cardDetailsDTO.setBlocked(false);
+            cardDetailsDTO.setUnblockedIn(blockedCard.getUnblockedIn());
+            cardDetailsDTO.setUnblockCause(blockedCard.getUnblockCause());
         } else {
             cardDetailsDTO.setBlocked(false);
         }
@@ -173,5 +172,10 @@ public class BoardService {
         blockedCard.setBlockedIn(LocalDateTime.now());
         Long blockedCardId = blockedCardRepository.save(blockedCard).getId();
         cardRepository.alterBlockCardIdByCardId(cardId, blockedCardId);
+    }
+
+    public void unblockCard(BlockedCardEntity blockedCard, String unblockCause){
+
+        blockedCardRepository.alterUnblockCauseAndUnblockedIn(blockedCard.getId(), unblockCause, LocalDateTime.now());
     }
 }

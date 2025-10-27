@@ -170,8 +170,8 @@ public class BoardService {
         BlockedCardEntity blockedCard = new BlockedCardEntity();
         blockedCard.setBlockCause(blockCause);
         blockedCard.setBlockedIn(LocalDateTime.now());
-        Long blockedCardId = blockedCardRepository.save(blockedCard).getId();
-        cardRepository.alterBlockCardIdByCardId(cardId, blockedCardId);
+        blockedCardRepository.save(blockedCard);
+        cardRepository.alterBlockCardIdByCardId(cardId, blockedCard);
     }
 
     public void unblockCard(BlockedCardEntity blockedCard, String unblockCause){

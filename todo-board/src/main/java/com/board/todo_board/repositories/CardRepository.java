@@ -1,5 +1,6 @@
 package com.board.todo_board.repositories;
 
+import com.board.todo_board.entities.BlockedCardEntity;
 import com.board.todo_board.entities.CardEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,5 +31,5 @@ public interface CardRepository extends JpaRepository<CardEntity, Long> {
     @Modifying
     @Transactional
     @Query("UPDATE CardEntity c SET c.blockedCard = ?2 WHERE id = ?1")
-    void alterBlockCardIdByCardId(Long cardId, Long blockCardId);
+    void alterBlockCardIdByCardId(Long cardId, BlockedCardEntity blockedCard);
 }

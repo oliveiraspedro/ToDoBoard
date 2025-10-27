@@ -1,7 +1,6 @@
 package com.board.todo_board.ui;
 
 import com.board.todo_board.dtos.CardDetailsDTO;
-import com.board.todo_board.entities.BlockedCardEntity;
 import com.board.todo_board.entities.BoardEntity;
 import com.board.todo_board.entities.CardEntity;
 import com.board.todo_board.entities.ColumnEntity;
@@ -93,8 +92,12 @@ public class BoardMenu {
                     " COLUNA: " + column.getName() + "\n" +
                     "-----------------------------------------------------");
             cardsList.forEach(card -> {
-                if (card.getBlockedCard() != null){
-                    System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + " [Bloqueado]" + "\n" +
+                CardDetailsDTO cardDTO = boardService.getCardById(card.getId());
+                if (cardDTO.isBlocked() || cardDTO.getBlockedIn() != null){
+                    System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + " [BLOQUEADO]" + "\n" +
+                            "      " + card.getDescription() +"\n");
+                } else if(cardDTO.getUnblockedIn() != null){
+                    System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + " [DESBLOQUEADO]" + "\n" +
                             "      " + card.getDescription() +"\n");
                 } else {
                     System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + "\n" +

@@ -48,7 +48,7 @@ public class MainMenu {
                     break;
                 case 3:
                     System.out.println("Editar um Board");
-                    deleteBoard();
+                    editBoard();
                     break;
                 case 4:
                     System.out.println("Deletando um board");

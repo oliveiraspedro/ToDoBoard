@@ -274,7 +274,11 @@ public class BoardMenu {
         System.out.println("           Selecione um Card para Desbloquear");
         System.out.println("*****************************************************");
         cardsList.forEach(card -> {
-            System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + " (ID: " + card.getId() + ")");
+            CardDetailsDTO cardDTO = boardService.getCardById(card.getId());
+            if (cardDTO.isBlocked() && cardDTO.getBlockedIn() != null){
+                System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + "\n" +
+                        "      " + card.getDescription() + "\n" + "Column Type: ");
+            }
         });
 
         int cardSelected = Integer.parseInt(sc.nextLine())-1;

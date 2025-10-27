@@ -26,4 +26,8 @@ public class CardEntity {
 
     @Column(name = "column_id")
     private Long columnId;
+
+    @OneToOne
+    @JoinColumn(name = "blocked_cards_id", referencedColumnName = "blocked_cards_id")
+    private BlockedCardEntity blockedCard;
 }

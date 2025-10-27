@@ -1,13 +1,15 @@
 package com.board.todo_board.services;
 
+import com.board.todo_board.dtos.CardDetailsDTO;
+import com.board.todo_board.entities.BlockedCardEntity;
 import com.board.todo_board.entities.BoardEntity;
 import com.board.todo_board.entities.CardEntity;
 import com.board.todo_board.entities.ColumnEntity;
 import com.board.todo_board.enums.ColumTypesEnum;
+import com.board.todo_board.repositories.BlockedCardRepository;
 import com.board.todo_board.repositories.BoardRepository;
 import com.board.todo_board.repositories.CardRepository;
 import com.board.todo_board.repositories.ColumRepository;
-import jakarta.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,9 @@ public class BoardService {
 
     @Autowired
     ColumRepository columRepository;
+
+    @Autowired
+    BlockedCardRepository blockedCardRepository;
 
     public void createBoard(String boardName, List<ColumnEntity> columns){
         BoardEntity boardEntity = new BoardEntity();
@@ -93,6 +98,34 @@ public class BoardService {
         return columRepository.findColumnsByBoardId(boardId);
     }
 
+    public CardDetailsDTO getCardById(Long cardId){
+        Optional<CardEntity> cardEntityOptional = cardRepository.findById(cardId);
+        CardEntity card = cardEntityOptional.orElseThrow(() -> new RuntimeException("Card não encontrado"));
+
+        CardDetailsDTO cardDetailsDTO = new CardDetailsDTO();
+        cardDetailsDTO.setId(card.getId());
+        cardDetailsDTO.setTitle(card.getTitle());
+        cardDetailsDTO.setDescription(card.getDescription());
+        cardDetailsDTO.setCreateAt(card.getCreateAt());
+
+        BlockedCardEntity blockedCard = card.getBlockedCard();
+
+        if (blockedCard != null && blockedCard.getUnblockCause() == null) {
+            cardDetailsDTO.setBlocked(true);
+            cardDetailsDTO.setBlockedIn(blockedCard.getBlockedIn());
+            cardDetailsDTO.setBlockCause(blockedCard.getBlockCause());
+        } else if (blockedCard != null && blockedCard.getUnblockCause() != null){
+            cardDetailsDTO.setBlocked(false);
+            cardDetailsDTO.setUnblockedIn(blockedCard.getUnblockedIn());
+            cardDetailsDTO.setUnblockCause(blockedCard.getUnblockCause());
+        } else {
+            cardDetailsDTO.setBlocked(false);
+        }
+
+        return cardDetailsDTO;
+
+    }
+
     public List<CardEntity> getAllCardByColumnId(Long columnId){
         return cardRepository.findByColumnId(columnId);
     }
@@ -121,7 +154,33 @@ public class BoardService {
         }
     }
 
+    public void alterCardTitle(CardEntity card, String newTitle){
+        cardRepository.alterCardTitleByCardId(card.getId(), newTitle);
+    }
+
+    public void alterCardDescription(CardEntity card, String newDescription){
+        cardRepository.alterCardDescriptionByCardId(card.getId(), newDescription);
+    }
+
     public void deleteBoard(BoardEntity board){
         boardRepository.delete(board);
+    }
+
+    public void blockCard(Long cardId, String blockCause){
+        BlockedCardEntity blockedCard = new BlockedCardEntity();
+        blockedCard.setBlockCause(blockCause);
+        blockedCard.setBlockedIn(LocalDateTime.now());
+        blockedCardRepository.save(blockedCard);
+        cardRepository.alterBlockCardIdByCardId(cardId, blockedCard);
+    }
+
+    public void unblockCard(BlockedCardEntity blockedCard, String unblockCause){
+
+        blockedCardRepository.alterUnblockCauseAndUnblockedIn(blockedCard.getId(), unblockCause, LocalDateTime.now());
+    }
+
+    public ColumnEntity getColumnById(Long columnId){
+        Optional<ColumnEntity> optionalColumn = columRepository.findById(columnId);
+        return optionalColumn.orElseThrow(() -> new RuntimeException("Coluna não encontrada"));
     }
 }

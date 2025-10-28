@@ -1,5 +1,6 @@
 package com.board.todo_board.ui;
 
+import com.board.todo_board.controllers.BoardController;
 import com.board.todo_board.entities.BoardEntity;
 import com.board.todo_board.entities.ColumnEntity;
 import com.board.todo_board.enums.ColumTypesEnum;
@@ -14,6 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class MainMenu {
+
+    @Autowired
+    BoardController boardController;
 
     @Autowired
     BoardService boardService;
@@ -68,9 +72,9 @@ public class MainMenu {
         System.out.println("Digite o nome do novo Board:");
         String boardName = sc.nextLine();
 
-        System.out.println("Além das 3 colunas principais, quantas colunas a mais você quer colocar no seu Board?");
-        System.out.println("(Digite 0 caso não queira adicionar nenhuma)");
-        int boardColumnQuant = Integer.parseInt(sc.nextLine());
+        int boardColumnQuant = readInt("Além das 3 colunas principais, quantas colunas a mais você quer colocar no seu Board?\n" +
+                "(Digite 0 caso não queira adicionar nenhuma)");
+
 
         System.out.println("Digite o nome da coluna inicial");
         String initialColumnName = sc.nextLine();
@@ -92,12 +96,13 @@ public class MainMenu {
         String canceledColumnName = sc.nextLine();
         columnsList.add(createColumn(canceledColumnName, columnsList.size()+1, ColumTypesEnum.CANCELED));
 
-        boardService.createBoard(boardName, columnsList);
+        boardController.createBoard(boardName, columnsList);
     }
 
     private void selectBoard(){
         List<BoardEntity> boardList = boardService.getAllBoards();
 
+        //todo: error handling ao selecionar uma board que não existe
         if (boardList.isEmpty()){
             System.out.println("VOCÊ NÃO CRIOU NENHUM BOARD AINDA");
         } else {
@@ -185,5 +190,28 @@ public class MainMenu {
         columEntity.setColumn_order(order);
         columEntity.setType(type);
         return columEntity;
+    }
+
+    private int readInt(String prompt) {
+        while (true) {
+            System.out.println(prompt);
+            String input = sc.nextLine().trim();
+
+            if (input.isEmpty()) {
+                System.out.println("Entrada vazia. Digite um número.");
+                continue;
+            }
+
+            try {
+                int value = Integer.parseInt(input);
+                if (value < 0) {
+                    System.out.println("Número inválido. Digite um valor igual ou maior que 0.");
+                    continue;
+                }
+                return value;
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Digite um número inteiro.");
+            }
+        }
     }
 }

@@ -34,17 +34,25 @@ public class BoardService {
     @Autowired
     BlockedCardRepository blockedCardRepository;
 
-    public void createBoard(String boardName, List<ColumnEntity> columns){
+    public BoardEntity createBoard(String boardName, List<ColumnEntity> columns){
         BoardEntity boardEntity = new BoardEntity();
-        boardEntity.setName(boardName);
+
+        if(boardName == null || boardName.isBlank()){
+            throw new IllegalArgumentException("O nome do board é obrigatório.");
+        }
+
+        columns.forEach(column -> {
+            if(column.getName() == null || column.getName().isBlank()){
+                throw new IllegalArgumentException("O nome da coluna do tipo " + column.getType().name() + " é obrigatório");
+            }
+        });
 
         System.out.println("SALVANDO BOARD NO BANCO DE DADOS...");
-        BoardEntity saveBoard = boardRepository.save(boardEntity);
-        System.out.println("BOARD " + boardName + " SALVO COM SUCESSO");
-        System.out.println("BOARD ID: " + saveBoard.getId());
+        boardEntity.setName(boardName);
+        BoardEntity board = boardRepository.save(boardEntity);
+        createColumns(board.getId(), columns);
 
-        createColumns(saveBoard.getId(), columns);
-
+        return board;
     }
 
     public void createColumns(Long boardId, List<ColumnEntity> columns){

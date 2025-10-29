@@ -187,14 +187,6 @@ public class MainMenu {
         }
     }
 
-    private ColumnEntity createColumn(String name, int order, ColumTypesEnum type){
-        ColumnEntity columEntity = new ColumnEntity();
-        columEntity.setName(name);
-        columEntity.setColumn_order(order);
-        columEntity.setType(type);
-        return columEntity;
-    }
-
     private int readInt(String prompt) {
         while (true) {
             System.out.println(prompt);

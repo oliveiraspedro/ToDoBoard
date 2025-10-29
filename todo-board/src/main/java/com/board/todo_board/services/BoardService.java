@@ -1,6 +1,7 @@
 package com.board.todo_board.services;
 
 import com.board.todo_board.dtos.CardDetailsDTO;
+import com.board.todo_board.dtos.ColumnDTO;
 import com.board.todo_board.entities.BlockedCardEntity;
 import com.board.todo_board.entities.BoardEntity;
 import com.board.todo_board.entities.CardEntity;
@@ -34,7 +35,7 @@ public class BoardService {
     @Autowired
     BlockedCardRepository blockedCardRepository;
 
-    public BoardEntity createBoard(String boardName, List<ColumnEntity> columns){
+    public BoardEntity createBoard(String boardName, List<ColumnDTO> columns){
         BoardEntity boardEntity = new BoardEntity();
 
         if(boardName == null || boardName.isBlank()){
@@ -55,17 +56,21 @@ public class BoardService {
         return board;
     }
 
-    public void createColumns(Long boardId, List<ColumnEntity> columns){
+    public void createColumns(Long boardId, List<ColumnDTO> columns){
         System.out.println("CRIANDO COLUNAS...");
-        columns.forEach(columEntity -> {
-            columEntity.setBoardId(boardId);
-            columRepository.save(columEntity);
+        columns.forEach(columnDTO -> {
+            ColumnEntity columnEntity = new ColumnEntity();
+            columnEntity.setBoardId(boardId);
+            columnEntity.setName(columnDTO.getName());
+            columnEntity.setColumn_order(columnDTO.getColumn_order());
+            columnEntity.setType(columnDTO.getType());
+            columRepository.save(columnEntity);
 
             System.out.println("COLUNA CRIADA COM SUCESSO!!");
-            System.out.println("ID: " + columEntity.getId());
-            System.out.println("NOME: " + columEntity.getName());
-            System.out.println("POSIÇÃO: " + columEntity.getColumn_order());
-            System.out.println("TIPO: " + columEntity.getType());
+            System.out.println("ID: " + columnEntity.getId());
+            System.out.println("NOME: " + columnEntity.getName());
+            System.out.println("POSIÇÃO: " + columnEntity.getColumn_order());
+            System.out.println("TIPO: " + columnEntity.getType());
         });
     }
 

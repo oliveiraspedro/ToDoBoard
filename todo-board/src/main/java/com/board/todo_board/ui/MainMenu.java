@@ -1,6 +1,7 @@
 package com.board.todo_board.ui;
 
 import com.board.todo_board.controllers.BoardController;
+import com.board.todo_board.dtos.ColumnDTO;
 import com.board.todo_board.entities.BoardEntity;
 import com.board.todo_board.entities.ColumnEntity;
 import com.board.todo_board.enums.ColumTypesEnum;
@@ -67,36 +68,40 @@ public class MainMenu {
     }
 
     private void createBoard(){
-        List<ColumnEntity> columnsList = new ArrayList<>();
-
         System.out.println("Digite o nome do novo Board:");
         String boardName = sc.nextLine();
 
         int boardColumnQuant = readInt("Além das 3 colunas principais, quantas colunas a mais você quer colocar no seu Board?\n" +
                 "(Digite 0 caso não queira adicionar nenhuma)");
+        List<ColumnDTO> columnsDTOList = createColumns(boardColumnQuant);
 
+        boardController.createBoard(boardName, columnsDTOList);
+    }
+
+    public List<ColumnDTO> createColumns(int boardColumnQuant){
+        List<ColumnDTO> columnsDTOList = new ArrayList<>();
 
         System.out.println("Digite o nome da coluna inicial");
         String initialColumnName = sc.nextLine();
-        columnsList.add(createColumn(initialColumnName, 1, ColumTypesEnum.INITIAL));
+        columnsDTOList.add(new ColumnDTO(initialColumnName, 1, ColumTypesEnum.INITIAL));
 
         if (boardColumnQuant > 0){
             for (int i = 1; i <= boardColumnQuant; i++) {
                 System.out.println("Digite o nome da coluna de pendentes");
                 String pendingColumnName = sc.nextLine();
-                columnsList.add(createColumn(pendingColumnName, i+1, ColumTypesEnum.PENDING));
+                columnsDTOList.add(new ColumnDTO(pendingColumnName, i+1, ColumTypesEnum.PENDING));
             }
         }
 
         System.out.println("Digite o nome da coluna final");
         String finalColumnName = sc.nextLine();
-        columnsList.add(createColumn(finalColumnName, columnsList.size()+1, ColumTypesEnum.FINAL));
+        columnsDTOList.add(new ColumnDTO(finalColumnName, columnsDTOList.size()+1, ColumTypesEnum.FINAL));
 
         System.out.println("Digite o nome da coluna de cancelados");
         String canceledColumnName = sc.nextLine();
-        columnsList.add(createColumn(canceledColumnName, columnsList.size()+1, ColumTypesEnum.CANCELED));
+        columnsDTOList.add(new ColumnDTO(canceledColumnName, columnsDTOList.size()+1, ColumTypesEnum.CANCELED));
 
-        boardController.createBoard(boardName, columnsList);
+        return columnsDTOList;
     }
 
     private void selectBoard(){

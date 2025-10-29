@@ -1,5 +1,6 @@
 package com.board.todo_board.controllers;
 
+import com.board.todo_board.dtos.ColumnDTO;
 import com.board.todo_board.entities.BoardEntity;
 import com.board.todo_board.entities.ColumnEntity;
 import com.board.todo_board.services.BoardService;
@@ -14,9 +15,9 @@ public class BoardController {
     @Autowired
     BoardService boardService;
 
-    public void createBoard(String boardName, List<ColumnEntity> columnEntityList){
+    public void createBoard(String boardName, List<ColumnDTO> columnDTOList){
         try {
-            BoardEntity board = boardService.createBoard(boardName, columnEntityList);
+            BoardEntity board = boardService.createBoard(boardName, columnDTOList);
             System.out.println("BOARD " + boardName + " SALVO COM SUCESSO");
         } catch (Exception e) {
             System.out.println("Erro ao criar um novo board: " + e.getMessage());

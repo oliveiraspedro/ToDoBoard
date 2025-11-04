@@ -196,11 +196,11 @@ public class BoardMenu {
         if (userRespose == 1){
             System.out.println("Digite o novo título do card: ");
             String newTitle = sc.nextLine();
-            boardService.alterCardTitle(cardsList.get(cardSelected), newTitle);
+            boardController.alterCardTitle(cardsList.get(cardSelected), newTitle);
         } else if (userRespose == 2) {
             System.out.println("Digite a nova descrição do card: ");
             String newDescription = sc.nextLine();
-            boardService.alterCardDescription(cardsList.get(cardSelected), newDescription);
+            boardController.alterCardDescription(cardsList.get(cardSelected), newDescription);
         }
     }
 
@@ -243,8 +243,7 @@ public class BoardMenu {
                     "      " + "Status: " + "ATIVO" + "\n");
         }
     }
-
-
+    
     private void blockCard(BoardEntity board){
         List<CardEntity> cardsList = new ArrayList<>();
         List<ColumnEntity> columnList = boardService.getAllColumnsByBoardId(board.getId());

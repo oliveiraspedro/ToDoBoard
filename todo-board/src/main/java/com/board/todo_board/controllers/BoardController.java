@@ -3,6 +3,7 @@ package com.board.todo_board.controllers;
 import com.board.todo_board.dtos.CardDetailsDTO;
 import com.board.todo_board.dtos.ColumnDTO;
 import com.board.todo_board.entities.BoardEntity;
+import com.board.todo_board.entities.CardEntity;
 import com.board.todo_board.entities.ColumnEntity;
 import com.board.todo_board.services.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,5 +53,13 @@ public class BoardController {
         } catch (Exception e){
             System.out.println("Erro ao tentar criar um card: " + e.getMessage());
         }
+    }
+
+    public void alterCardTitle(CardEntity card, String newTitle){
+        boardService.alterCardTitle(card, newTitle);
+    }
+
+    public void alterCardDescription(CardEntity card, String newDescription){
+        boardService.alterCardDescription(card, newDescription);
     }
 }

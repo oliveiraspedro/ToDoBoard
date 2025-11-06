@@ -21,7 +21,7 @@ public class BoardController {
     public void createBoard(String boardName, List<ColumnDTO> columnDTOList){
         try {
             BoardEntity board = boardService.createBoard(boardName, columnDTOList);
-            System.out.println("BOARD " + boardName + " SALVO COM SUCESSO");
+            System.out.println("Board " + boardName + " salvo com sucesso!");
         } catch (Exception e) {
             System.out.println("Erro ao criar um novo board: " + e.getMessage());
         }
@@ -57,18 +57,38 @@ public class BoardController {
     }
 
     public void alterCardTitle(CardEntity card, String newTitle){
-        boardService.alterCardTitle(card, newTitle);
+        try {
+            boardService.alterCardTitle(card, newTitle);
+            System.out.println("Título do card atualizado com sucesso!");
+        } catch (Exception e){
+            System.out.println("Erro ao tentar mudar o título do card: " + e.getMessage());
+        }
     }
 
     public void alterCardDescription(CardEntity card, String newDescription){
-        boardService.alterCardDescription(card, newDescription);
+        try{
+            boardService.alterCardDescription(card, newDescription);
+            System.out.println("Descrição do card atualizada com sucesso!");
+        } catch (Exception e){
+            System.out.println("Erro ao tentar alterar a descrição do card: " + e.getMessage());
+        }
     }
 
     public void blockCard(Long cardId, String blockCause){
-        boardService.blockCard(cardId, blockCause);
+        try {
+            boardService.blockCard(cardId, blockCause);
+            System.out.println("Card bloqueado com sucesso!");
+        } catch (Exception e){
+            System.out.println("Erro ao tentar bloquear um card: " + e.getMessage());
+        }
     }
 
     public void unblockCard(BlockedCardEntity blockedCard, String unblockCause){
-        boardService.unblockCard(blockedCard, unblockCause);
+        try {
+            boardService.unblockCard(blockedCard, unblockCause);
+            System.out.println("Card desbloqueado com sucesso!");
+        } catch (Exception e){
+            System.out.println("Erro ao tentar desbloquar um card: " + e.getMessage());
+        }
     }
 }

@@ -159,8 +159,7 @@ public class BoardMenu {
                     "-----------------------------------------------------");
         });
 
-        System.out.print("Digite o número da coluna que para qual você deseja mover o card: ");
-        int userColumnChosed = Integer.parseInt(sc.nextLine())-1;
+        int userColumnChosed = readInt("Digite o número da coluna que para qual você deseja mover o card: ")-1;
 
         boardService.moveCard(cardList.get(userCardChosed), columnList.get(userColumnChosed));
     }
@@ -183,15 +182,11 @@ public class BoardMenu {
                         "      " + card.getDescription() + "\n" + "Column Type: " + columnType + "\n");
             }
         });
-
-        //todo: Fazer tratamento de erro
-
         int cardSelected = Integer.parseInt(sc.nextLine())-1;
 
         System.out.println("   >> 1 - Título");
         System.out.println("   >> 2 - Descrição");
-        System.out.println("O que você quer editar?");
-        int userRespose = Integer.parseInt(sc.nextLine());
+        int userRespose = readInt("O que você quer editar?");
         
         if (userRespose == 1){
             System.out.println("Digite o novo título do card: ");
@@ -295,5 +290,28 @@ public class BoardMenu {
         String unblockCause = sc.nextLine();
 
         boardController.unblockCard(cardsList.get(cardSelected).getBlockedCard(), unblockCause);
+    }
+
+    private int readInt(String prompt) {
+        while (true) {
+            System.out.println(prompt);
+            String input = sc.nextLine().trim();
+
+            if (input.isEmpty()) {
+                System.out.println("Entrada vazia. Digite um número.");
+                continue;
+            }
+
+            try {
+                int value = Integer.parseInt(input);
+                if (value < 0) {
+                    System.out.println("Número inválido. Digite um valor igual ou maior que 0.");
+                    continue;
+                }
+                return value;
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Digite um número inteiro.");
+            }
+        }
     }
 }

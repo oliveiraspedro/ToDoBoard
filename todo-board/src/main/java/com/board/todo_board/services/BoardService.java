@@ -188,10 +188,20 @@ public class BoardService {
     }
 
     public void alterCardTitle(CardEntity card, String newTitle){
+
+        if (newTitle.isEmpty() || newTitle.isBlank()){
+            throw new IllegalArgumentException("O título do card é obrigatório");
+        }
+
         cardRepository.alterCardTitleByCardId(card.getId(), newTitle);
     }
 
     public void alterCardDescription(CardEntity card, String newDescription){
+
+        if(newDescription.isEmpty() || newDescription.isBlank()){
+            throw new IllegalArgumentException("A descrição de um card é obrigatória");
+        }
+
         cardRepository.alterCardDescriptionByCardId(card.getId(), newDescription);
     }
 
@@ -200,6 +210,11 @@ public class BoardService {
     }
 
     public void blockCard(Long cardId, String blockCause){
+
+        if (blockCause.isEmpty() || blockCause.isBlank()){
+            throw new IllegalArgumentException("O motivo do bloqueio é obrigatório");
+        }
+
         BlockedCardEntity blockedCard = new BlockedCardEntity();
         blockedCard.setBlockCause(blockCause);
         blockedCard.setBlockedIn(LocalDateTime.now());
@@ -208,6 +223,9 @@ public class BoardService {
     }
 
     public void unblockCard(BlockedCardEntity blockedCard, String unblockCause){
+        if (unblockCause.isEmpty() || unblockCause.isBlank()){
+            throw new IllegalArgumentException("O motivo do bloqueio é obrigatório");
+        }
 
         blockedCardRepository.alterUnblockCauseAndUnblockedIn(blockedCard.getId(), unblockCause, LocalDateTime.now());
     }

@@ -212,7 +212,7 @@ public class BoardMenu {
             System.out.println("   >> Card #" + cardIndex.getAndIncrement() + " | " + card.getTitle() + " (ID: " + card.getId() + ")");
         });
 
-        int cardSelected = Integer.parseInt(sc.nextLine())-1;
+        int cardSelected = readSelectedCard(cardsList);
 
         CardDetailsDTO cardDTO = boardService.getCardById(cardsList.get(cardSelected).getId());
 
@@ -310,6 +310,29 @@ public class BoardMenu {
                 }
                 return value;
             } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Digite um número inteiro.");
+            }
+        }
+    }
+
+    private int readSelectedCard(List<CardEntity> cardEntityList){
+        while (true){
+            System.out.println("cardEntityList size: " + cardEntityList.size());
+            String input = sc.nextLine().trim();
+
+            if (input.isEmpty()){
+                System.out.println("Entrada vazia. Digite um número.");
+                continue;
+            }
+
+            try {
+                int cardSelected = Integer.parseInt(input)-1;
+                if (cardSelected < 0 || cardSelected >= cardEntityList.size()){
+                    System.out.println("Este card selecionado não está na lista de cards");
+                    continue;
+                }
+                return cardSelected;
+            } catch (NumberFormatException e){
                 System.out.println("Entrada inválida. Digite um número inteiro.");
             }
         }

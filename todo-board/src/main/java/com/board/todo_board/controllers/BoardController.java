@@ -62,4 +62,8 @@ public class BoardController {
     public void alterCardDescription(CardEntity card, String newDescription){
         boardService.alterCardDescription(card, newDescription);
     }
+
+    public void blockCard(Long cardId, String blockCause){
+        boardService.blockCard(cardId, blockCause);
+    }
 }

@@ -268,7 +268,7 @@ public class BoardMenu {
         System.out.println("Qual é o motivo da bloqueio?");
         String blockCause = sc.nextLine();
 
-        boardService.blockCard(cardsList.get(cardSelected).getId(), blockCause);
+        boardController.blockCard(cardsList.get(cardSelected).getId(), blockCause);
     }
 
     private void unblockCard(BoardEntity board){
@@ -294,6 +294,7 @@ public class BoardMenu {
         System.out.println("Qual é o motivo do desbloqueio?");
         String unblockCause = sc.nextLine();
 
+        //todo: conectar ao controller
         boardService.unblockCard(cardsList.get(cardSelected).getBlockedCard(), unblockCause);
     }
 }

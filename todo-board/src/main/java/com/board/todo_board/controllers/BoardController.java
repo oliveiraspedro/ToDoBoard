@@ -2,6 +2,7 @@ package com.board.todo_board.controllers;
 
 import com.board.todo_board.dtos.CardDetailsDTO;
 import com.board.todo_board.dtos.ColumnDTO;
+import com.board.todo_board.entities.BlockedCardEntity;
 import com.board.todo_board.entities.BoardEntity;
 import com.board.todo_board.entities.CardEntity;
 import com.board.todo_board.entities.ColumnEntity;
@@ -65,5 +66,9 @@ public class BoardController {
 
     public void blockCard(Long cardId, String blockCause){
         boardService.blockCard(cardId, blockCause);
+    }
+
+    public void unblockCard(BlockedCardEntity blockedCard, String unblockCause){
+        boardService.unblockCard(blockedCard, unblockCause);
     }
 }

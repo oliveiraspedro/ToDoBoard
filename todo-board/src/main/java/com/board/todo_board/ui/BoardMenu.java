@@ -294,7 +294,6 @@ public class BoardMenu {
         System.out.println("Qual é o motivo do desbloqueio?");
         String unblockCause = sc.nextLine();
 
-        //todo: conectar ao controller
-        boardService.unblockCard(cardsList.get(cardSelected).getBlockedCard(), unblockCause);
+        boardController.unblockCard(cardsList.get(cardSelected).getBlockedCard(), unblockCause);
     }
 }

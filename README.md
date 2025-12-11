@@ -59,3 +59,7 @@ mvn clean install
 ```
 
 ### 4. Rodar a Aplicação
+Inicie o aplicativo Spring Boot:
+```
+mvn spring-boot:run
+```

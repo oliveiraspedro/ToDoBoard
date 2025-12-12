@@ -1,5 +1,6 @@
 package com.board.todo_board.ui;
 
+import com.board.todo_board.controllers.BoardController;
 import com.board.todo_board.dtos.CardDetailsDTO;
 import com.board.todo_board.entities.BoardEntity;
 import com.board.todo_board.entities.CardEntity;
@@ -16,6 +17,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class BoardMenu {
+
+    @Autowired
+    BoardController boardController;
 
     @Autowired
     BoardService boardService;
@@ -116,7 +120,7 @@ public class BoardMenu {
         System.out.println("Digite uma descrição para o card");
         String cardDescription = sc.nextLine();
 
-        boardService.createCard(boardId, cardTitle, cardDescription);
+        boardController.createCard(boardId, cardTitle, cardDescription);
     }
 
     private void moveCard(BoardEntity board) {
@@ -192,11 +196,11 @@ public class BoardMenu {
         if (userRespose == 1){
             System.out.println("Digite o novo título do card: ");
             String newTitle = sc.nextLine();
-            boardService.alterCardTitle(cardsList.get(cardSelected), newTitle);
+            boardController.alterCardTitle(cardsList.get(cardSelected), newTitle);
         } else if (userRespose == 2) {
             System.out.println("Digite a nova descrição do card: ");
             String newDescription = sc.nextLine();
-            boardService.alterCardDescription(cardsList.get(cardSelected), newDescription);
+            boardController.alterCardDescription(cardsList.get(cardSelected), newDescription);
         }
     }
 
@@ -239,8 +243,7 @@ public class BoardMenu {
                     "      " + "Status: " + "ATIVO" + "\n");
         }
     }
-
-
+    
     private void blockCard(BoardEntity board){
         List<CardEntity> cardsList = new ArrayList<>();
         List<ColumnEntity> columnList = boardService.getAllColumnsByBoardId(board.getId());
@@ -265,7 +268,7 @@ public class BoardMenu {
         System.out.println("Qual é o motivo da bloqueio?");
         String blockCause = sc.nextLine();
 
-        boardService.blockCard(cardsList.get(cardSelected).getId(), blockCause);
+        boardController.blockCard(cardsList.get(cardSelected).getId(), blockCause);
     }
 
     private void unblockCard(BoardEntity board){
@@ -291,6 +294,6 @@ public class BoardMenu {
         System.out.println("Qual é o motivo do desbloqueio?");
         String unblockCause = sc.nextLine();
 
-        boardService.unblockCard(cardsList.get(cardSelected).getBlockedCard(), unblockCause);
+        boardController.unblockCard(cardsList.get(cardSelected).getBlockedCard(), unblockCause);
     }
 }

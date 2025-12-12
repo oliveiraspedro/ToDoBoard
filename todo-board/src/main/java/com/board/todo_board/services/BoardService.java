@@ -1,6 +1,7 @@
 package com.board.todo_board.services;
 
 import com.board.todo_board.dtos.CardDetailsDTO;
+import com.board.todo_board.dtos.ColumnDTO;
 import com.board.todo_board.entities.BlockedCardEntity;
 import com.board.todo_board.entities.BoardEntity;
 import com.board.todo_board.entities.CardEntity;
@@ -34,34 +35,46 @@ public class BoardService {
     @Autowired
     BlockedCardRepository blockedCardRepository;
 
-    public void createBoard(String boardName, List<ColumnEntity> columns){
+    public BoardEntity createBoard(String boardName, List<ColumnDTO> columns){
         BoardEntity boardEntity = new BoardEntity();
-        boardEntity.setName(boardName);
+
+        if(boardName == null || boardName.isBlank()){
+            throw new IllegalArgumentException("O nome do board é obrigatório.");
+        }
+
+        columns.forEach(column -> {
+            if(column.getName() == null || column.getName().isBlank()){
+                throw new IllegalArgumentException("O nome da coluna do tipo " + column.getType().name() + " é obrigatório");
+            }
+        });
 
         System.out.println("SALVANDO BOARD NO BANCO DE DADOS...");
-        BoardEntity saveBoard = boardRepository.save(boardEntity);
-        System.out.println("BOARD " + boardName + " SALVO COM SUCESSO");
-        System.out.println("BOARD ID: " + saveBoard.getId());
+        boardEntity.setName(boardName);
+        BoardEntity board = boardRepository.save(boardEntity);
+        createColumns(board.getId(), columns);
 
-        createColumns(saveBoard.getId(), columns);
-
+        return board;
     }
 
-    public void createColumns(Long boardId, List<ColumnEntity> columns){
+    public void createColumns(Long boardId, List<ColumnDTO> columns){
         System.out.println("CRIANDO COLUNAS...");
-        columns.forEach(columEntity -> {
-            columEntity.setBoardId(boardId);
-            columRepository.save(columEntity);
+        columns.forEach(columnDTO -> {
+            ColumnEntity columnEntity = new ColumnEntity();
+            columnEntity.setBoardId(boardId);
+            columnEntity.setName(columnDTO.getName());
+            columnEntity.setColumn_order(columnDTO.getColumn_order());
+            columnEntity.setType(columnDTO.getType());
+            columRepository.save(columnEntity);
 
             System.out.println("COLUNA CRIADA COM SUCESSO!!");
-            System.out.println("ID: " + columEntity.getId());
-            System.out.println("NOME: " + columEntity.getName());
-            System.out.println("POSIÇÃO: " + columEntity.getColumn_order());
-            System.out.println("TIPO: " + columEntity.getType());
+            System.out.println("ID: " + columnEntity.getId());
+            System.out.println("NOME: " + columnEntity.getName());
+            System.out.println("POSIÇÃO: " + columnEntity.getColumn_order());
+            System.out.println("TIPO: " + columnEntity.getType());
         });
     }
 
-    public void createCard(Long boardId, String cardTitle, String cardDescription){
+    public CardDetailsDTO createCard(Long boardId, String cardTitle, String cardDescription){
 
         //todo: Implementar a lógica de formatação de data de criação do card
 
@@ -76,18 +89,29 @@ public class BoardService {
         System.out.println("CARD CREATEDAT: " + LocalDateTime.now().format(formatter));
         System.out.println("CARD CREATEDAT: " + LocalDateTime.now().format(formatter));
 
-        CardEntity card = new CardEntity();
-
-        if (!cardTitle.isEmpty() && !cardDescription.isEmpty()){
-            card.setTitle(cardTitle);
-            card.setDescription(cardDescription);
-            card.setCreateAt(LocalDateTime.now());
-
-            Optional<ColumnEntity> initialColumnOptional = columRepository.findByBoardIdAndType(boardId, ColumTypesEnum.INITIAL);
-            ColumnEntity initialColumn = initialColumnOptional.orElseThrow(() -> new RuntimeException("Coluna inicial não encontrada para este board"));
-            card.setColumnId(initialColumn.getId());
-            cardRepository.save(card);
+        if (cardTitle.isEmpty() && cardTitle.isBlank()){
+            throw new IllegalArgumentException("O título do card não pode estar vazio");
         }
+
+        if (cardDescription.isEmpty() && cardDescription.isBlank()){
+            throw new IllegalArgumentException("A descrição do card não pode estar vazia");
+        }
+
+        CardEntity card = new CardEntity();
+        CardDetailsDTO cardDTO = new CardDetailsDTO();
+
+        card.setTitle(cardTitle);
+        card.setDescription(cardDescription);
+        card.setCreateAt(LocalDateTime.now());
+
+        Optional<ColumnEntity> initialColumnOptional = columRepository.findByBoardIdAndType(boardId, ColumTypesEnum.INITIAL);
+        ColumnEntity initialColumn = initialColumnOptional.orElseThrow(() -> new RuntimeException("Coluna inicial não encontrada para este board"));
+        card.setColumnId(initialColumn.getId());
+        cardRepository.save(card);
+
+        cardDTO.setTitle(card.getTitle());
+        cardDTO.setDescription(card.getDescription());
+        return cardDTO;
     }
 
     public List<BoardEntity> getAllBoards(){
@@ -99,6 +123,11 @@ public class BoardService {
     }
 
     public void alterBoardName(BoardEntity board, String newBoardName){
+
+        if (newBoardName.isEmpty() || newBoardName.isBlank()){
+            throw new IllegalArgumentException();
+        }
+
         boardRepository.alterBoardNameByBoardId(board.getId(), newBoardName);
     }
 
